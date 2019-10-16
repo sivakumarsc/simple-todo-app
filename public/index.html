@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Todo App in React, Vue and Svelte</title>
+
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+
+	<!-- Babel Js -->
+	<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+	<!-- React JS -->
+	<script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
+	<script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
+
+	<!-- Vue JS -->
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+	<!-- <link rel='stylesheet' href='/global.css'> -->
+	<link rel='stylesheet' href='/bundle.css'>
+	<link rel='stylesheet' href='/index.css'>
+
+	<script defer src='/bundle.js'></script>
+</head>
+
+<body>
+    <div class="wrapper">
+      <header>
+        <h1 class="text-center">Todo App in React, Vue and Svelte</h1>
+      </header>
+
+      <section class="columns padding-top-20">        
+        <div class="column">
+          <div class="logo-container">
+            <img class="logo" src="assets/react.png" alt="react-logo" />
+          </div>
+          <div class="padding-top-20">
+            <div id="react-root"></div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="logo-container">
+            <img class="logo" src="assets/vue.png" alt="vue-logo" />
+          </div>
+          <div class="padding-top-20">
+            <div id="vue-root">
+              <input
+                placeholder="Type here..."
+                type="text"
+                v-model="todo"
+              />
+              <button class="margin-left-10" v-on:click="addTodo">Add</button>
+              <ul>
+                <li
+                  v-for="todo in todos"
+                  v-bind:key="todo.id"
+                  v-on:click="markCompleted(todo.id)"
+                  v-bind:class="{ 'strike-through' : todo.isCompleted }"
+                >
+                  {{todo.task}}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="logo-container svelte">
+            <img class="logo" src="assets/svelte.png" alt="svelte-logo" />
+					</div>
+					<div class="padding-top-20">
+            <div id="svelte-root">
+						</div>
+					</div>
+        </div>
+      </section>
+    </div>
+
+    <!-- React Todo App -->
+    <script type="text/babel">
+      const TodoApp = () => {
+        const [todos, updateTodos] = React.useState([]);
+        const [todo, updateTodo] = React.useState("");
+
+        const addTodo = () => {
+          if (todo && todo.trim()) {
+            updateTodos([...todos, {id: todos.length, task: todo, isCompleted: false}]);
+            updateTodo("");
+          }
+        }
+
+        const toggleComplete = id => {
+          const updatedTodos = todos.map((t) => {
+            if (t.id === id) {
+              return {
+                ...t,
+                isCompleted: !t.isCompleted
+              }
+            }
+            return t;
+          });
+
+          updateTodos([...updatedTodos]);
+        }
+
+        return (
+          <div>
+            <input placeholder="Type here..." type="text" value={todo} onChange={(e) => updateTodo(e.target.value)} />
+            <button className="margin-left-10" onClick={addTodo}>Add</button>
+            <ul>
+              {
+                todos.map((t) => {
+                  return (<li onClick={() => toggleComplete(t.id)}
+                    class={`todo-item ${t.isCompleted ? "strike-through" : ""}`}
+                    key={t.id}
+                    >
+                      {t.task}
+                    </li>
+                  )
+                })
+              }
+            </ul>
+          </div>
+        );
+      }
+
+      ReactDOM.render(
+        <TodoApp />,
+        document.getElementById("react-root")
+      );
+    </script>
+
+    <!-- Vue Todo App -->
+    <script type="text/babel">
+      var todoVue = new Vue({
+        el: "#vue-root",
+        data: {
+          todo: "",
+          todos: [],
+        },
+        methods: {
+          addTodo: function() {
+            if (this.todo && this.todo.trim()) {
+              this.todos.push({
+                id: this.todos.length,
+                task: this.todo,
+                isCompleted: false,
+              });
+
+              this.todo = "";
+            }
+          },
+          markCompleted: function(id) {
+            const updatedTodos = this.todos.map((t) => {
+              if (t.id === id) {
+                return {
+                  ...t,
+                  isCompleted: !t.isCompleted
+                }
+              }
+              return t;
+            });
+
+            this.todos = updatedTodos;
+          },
+        }
+      });
+      
+    </script>
+  </body>
+</html>
